@@ -1,5 +1,16 @@
 const TILE_SIZE = 32;
 
+const MAP_DATA = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,1,1,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,1,0,0,0,1,0,0,1],
+  [1,0,1,0,0,0,1,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1]
+];
+
 const config = {
   type: Phaser.AUTO,
 
@@ -48,12 +59,53 @@ function preload() {
   this.load.image('player', 'assets/player.png');
   this.load.image('onigirikun', 'assets/onigirikun.png');
   this.load.image('norinasionigirikun', 'assets/norinasionigirikun.png');
+  this.load.image('glass', 'assets/glass.png');
+  this.load.image('tree', 'assets/tree.png');
+
+}
+
+function drawMap() {
+
+  for (let y = 0; y < MAP_DATA.length; y++) {
+
+    for (let x = 0; x < MAP_DATA[y].length; x++) {
+
+      const tile = MAP_DATA[y][x];
+
+      const px = x * TILE_SIZE;
+      const py = y * TILE_SIZE;
+
+      if (tile === 0) {
+
+        this.add.image(
+          px,
+          py,
+          'glass'
+        ).setOrigin(0);
+
+      }
+
+      else {
+
+        this.add.image(
+          px,
+          py,
+          'tree'
+        ).setOrigin(0);
+
+      }
+
+    }
+
+  }
 
 }
 
 function create() {
 
-  player = this.add.sprite(320, 240, 'player');
+  drawMap.call(this);
+
+  player = this.add.sprite(64, 64, 'player');
 
   cursors = this.input.keyboard.createCursorKeys();
 
@@ -172,6 +224,24 @@ function showNextMessage() {
 }
 
 function movePlayer(dx, dy) {
+
+  const tileX = Math.floor(player.x / TILE_SIZE) + dx;
+  const tileY = Math.floor(player.y / TILE_SIZE) + dy;
+
+  // マップ外チェック
+  if (
+    tileY < 0 ||
+    tileY >= MAP_DATA.length ||
+    tileX < 0 ||
+    tileX >= MAP_DATA[0].length
+  ) {
+    return;
+  }
+
+  // 壁チェック
+  if (MAP_DATA[tileY][tileX] === 1) {
+    return;
+  }
 
   moving = true;
 
