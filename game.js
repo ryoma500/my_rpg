@@ -33,6 +33,9 @@ let messageText;
 let talking = false;
 let talkIndex = 0;
 
+let norinasionigirikun;
+let spaceKey;
+
 const messages = [
   'こんにちは！',
   'いい天気ですね',
@@ -44,6 +47,7 @@ function preload() {
 
   this.load.image('player', 'assets/player.png');
   this.load.image('onigirikun', 'assets/onigirikun.png');
+  this.load.image('norinasionigirikun', 'assets/norinasionigirikun.png');
 
 }
 
@@ -59,10 +63,20 @@ function create() {
     Phaser.Input.Keyboard.KeyCodes.T
   );
 
+  spaceKey = this.input.keyboard.addKey(
+    Phaser.Input.Keyboard.KeyCodes.SPACE
+  );
+
   messageText = this.add.text(20, 20, '', {
     fontSize: '24px',
     fill: '#ffffff'
   });
+
+  norinasionigirikun = this.add.sprite(
+    520,
+    80,
+    'norinasionigirikun'
+  );
 
 }
 
@@ -104,6 +118,31 @@ function update() {
       showNextMessage();
 
     }
+  }
+
+  if (Phaser.Input.Keyboard.JustDown(spaceKey)) {
+
+    if (norinasionigirikun) {
+
+      const distance = Phaser.Math.Distance.Between(
+        player.x,
+        player.y,
+        norinasionigirikun.x,
+        norinasionigirikun.y
+      );
+
+      if (distance < 60) {
+
+        norinasionigirikun.destroy();
+
+        norinasionigirikun = null;
+
+        messageText.setText('のりなしおにぎりくんをたおした！');
+
+      }
+
+    }
+
   }
 
 }
