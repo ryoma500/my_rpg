@@ -30,6 +30,16 @@ let moving = false;
 let tKey;
 let messageText;
 
+let talking = false;
+let talkIndex = 0;
+
+const messages = [
+  'こんにちは！',
+  'いい天気ですね',
+  'おにぎりは好きですか？',
+  'またね！'
+];
+
 function preload() {
 
   this.load.image('player', 'assets/player.png');
@@ -40,8 +50,6 @@ function preload() {
 function create() {
 
   player = this.add.sprite(320, 240, 'player');
-
-  player.setScale(0.2);
 
   cursors = this.input.keyboard.createCursorKeys();
 
@@ -60,7 +68,7 @@ function create() {
 
 function update() {
 
-  if (moving) {
+  if (moving || talking) {
     return;
   }
 
@@ -90,9 +98,37 @@ function update() {
     );
 
     if (distance < 40) {
-      messageText.setText('こんにちは！');
+
+      talking = true;
+
+      showNextMessage();
+
     }
   }
+
+}
+
+function showNextMessage() {
+
+  messageText.setText(messages[talkIndex]);
+
+  talkIndex++;
+
+  if (talkIndex >= messages.length) {
+
+    talkIndex = 0;
+
+    setTimeout(() => {
+      messageText.setText('');
+      talking = false;
+    }, 1000);
+
+    return;
+  }
+
+  tKey.once('down', () => {
+    showNextMessage();
+  });
 
 }
 
